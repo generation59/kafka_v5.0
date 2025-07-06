@@ -1,0 +1,16 @@
+=== Kafka Console Consumer Output ===
+Timestamp: Sun Jul  6 03:19:43 PM +05 2025
+
+--- Messages from user-events topic ---
+{"userId": "user_15", "eventType": "VIEW_PRODUCT", "timestamp": 1704547200000, "sessionId": "session_abc123", "productId": "product_456", "amount": 0, "metadata": {"source": "web", "campaign": "summer_sale", "browser": "Chrome"}}
+{"userId": "user_19", "eventType": "PURCHASE", "timestamp": 1704547201000, "sessionId": "session_def456", "productId": "product_789", "amount": 99.99, "metadata": {"source": "mobile", "campaign": "new_user", "paymentMethod": "card"}}
+{"userId": "user_13", "eventType": "VIEW_PRODUCT", "timestamp": 1704547202000, "sessionId": "session_ghi789", "productId": "product_123", "amount": 0, "metadata": {"source": "web", "campaign": "winter_sale", "browser": "Firefox"}}
+{"userId": "user_19", "eventType": "ADD_TO_CART", "timestamp": 1704547203000, "sessionId": "session_def456", "productId": "product_555", "amount": 45.50, "metadata": {"source": "mobile", "campaign": "new_user", "quantity": 2}}
+{"userId": "user_18", "eventType": "LOGIN", "timestamp": 1704547204000, "sessionId": "session_jkl012", "productId": null, "amount": 0, "metadata": {"source": "web", "loginMethod": "email", "browser": "Safari"}}
+
+--- Messages from processed-events topic ---
+{"userId": "user_15", "eventType": "VIEW_PRODUCT", "timestamp": 1704547200000, "sessionId": "session_abc123", "productId": "product_456", "amount": 0, "metadata": {"source": "web", "campaign": "summer_sale", "browser": "Chrome"}, "nifi.processing.timestamp": "1704547201500", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "2", "source.offset": "0"}
+{"userId": "user_19", "eventType": "PURCHASE", "timestamp": 1704547201000, "sessionId": "session_def456", "productId": "product_789", "amount": 99.99, "metadata": {"source": "mobile", "campaign": "new_user", "paymentMethod": "card"}, "nifi.processing.timestamp": "1704547202500", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "2", "source.offset": "1"}
+{"userId": "user_13", "eventType": "VIEW_PRODUCT", "timestamp": 1704547202000, "sessionId": "session_ghi789", "productId": "product_123", "amount": 0, "metadata": {"source": "web", "campaign": "winter_sale", "browser": "Firefox"}, "nifi.processing.timestamp": "1704547203500", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "1", "source.offset": "0"}
+{"userId": "user_19", "eventType": "ADD_TO_CART", "timestamp": 1704547203000, "sessionId": "session_def456", "productId": "product_555", "amount": 45.50, "metadata": {"source": "mobile", "campaign": "new_user", "quantity": 2}, "nifi.processing.timestamp": "1704547204500", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "1", "source.offset": "1"}
+{"userId": "user_18", "eventType": "LOGIN", "timestamp": 1704547204000, "sessionId": "session_jkl012", "productId": null, "amount": 0, "metadata": {"source": "web", "loginMethod": "email", "browser": "Safari"}, "nifi.processing.timestamp": "1704547205500", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "0", "source.offset": "0"}

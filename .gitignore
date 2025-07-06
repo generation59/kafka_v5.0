@@ -1,0 +1,306 @@
+# Kafka v5.0 Project .gitignore
+
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ================================
+# IDEs and Editors
+# ================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ================================
+# Java/JVM (Kafka related)
+# ================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+*.log
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ================================
+# Docker
+# ================================
+# Docker volumes and data
+**/data/
+docker-compose.override.yml
+.dockerignore
+
+# ================================
+# Kafka Specific
+# ================================
+# Kafka data directories
+kafka-logs/
+zookeeper-data/
+zookeeper-logs/
+kafka-1-data/
+kafka-2-data/
+kafka-3-data/
+schema-registry-data/
+
+# Kafka SSL certificates and keys
+*.jks
+*.p12
+*.pem
+*.crt
+*.key
+*.csr
+ssl/
+certs/
+
+# Kafka Connect
+connect-plugins/
+connect-data/
+
+# NiFi data
+nifi-*/
+flowfile_repository/
+database_repository/
+content_repository/
+provenance_repository/
+state/
+conf/users.xml
+conf/authorizations.xml
+conf/login-identity-providers.xml
+
+# ================================
+# Credentials and Secrets
+# ================================
+.env
+.env.local
+.env.*.local
+secrets/
+credentials/
+*.secret
+*password*
+*credential*
+config/local.*
+config/dev.*
+config/prod.*
+
+# ================================
+# Logs and Temporary Files
+# ================================
+*.log
+*.out
+*.err
+tmp/
+temp/
+.tmp/
+
+# Application logs
+application*.log
+spring.log
+kafka*.log
+zookeeper*.log
+nifi*.log
+
+# ================================
+# OS Generated Files
+# ================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# Development and Testing
+# ================================
+# Test outputs
+test-results/
+test-reports/
+.coverage
+coverage.xml
+*.cover
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# ================================
+# Confluent Platform Specific
+# ================================
+# Confluent Control Center data
+control-center-data/
+
+# Confluent Schema Registry
+schema-registry-logs/
+
+# KSQL
+ksql-data/
+ksql-logs/
+
+# Confluent REST Proxy
+rest-proxy-logs/
+
+# ================================
+# Custom Project Specific
+# ================================
+# Local configuration overrides
+local.properties
+local.yml
+local.yaml
+local.json
+
+# Generated SSL certificates
+/usr/local/share/ca-certificates/Yandex/
+
+# Docker compose overrides
+docker-compose.local.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+
+# Local scripts
+local_*.sh
+dev_*.sh
+test_*.sh
+
+# Temporary data files
+*.csv
+*.json.bak
+*.avro.bak
+
+# IDE project files
+*.iml
+*.ipr
+*.iws
+
+# Runtime data
+pid.txt
+*.pid
+*.seed
+*.pid.lock
+
+# ================================
+# Archive and Compressed Files
+# ================================
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+
+# But keep specific archives that might be part of setup
+!install/*.tar.gz
+!setup/*.zip 

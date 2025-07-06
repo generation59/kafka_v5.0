@@ -1,0 +1,84 @@
+=== Apache NiFi Processing Logs ===
+Timestamp: Sun Jul  6 03:19:43 PM +05 2025
+
+2025-07-06 15:19:52,000 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Successfully connected to Kafka cluster [localhost:9092,localhost:9093,localhost:9094]
+2025-07-06 15:19:52,001 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Subscribed to topic: user-events
+2025-07-06 15:19:52,002 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Consumer group: nifi-kafka-consumer-group
+
+2025-07-06 15:20:03,450 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Received message from topic: user-events, partition: 2, offset: 0, key: user_15
+2025-07-06 15:20:03,450 DEBUG [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Message content: {"userId": "user_15", "eventType": "VIEW_PRODUCT", "timestamp": 1704547200000, "sessionId": "session_abc123", "productId": "product_456", "amount": 0}
+2025-07-06 15:20:03,451 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Routing to relationship: success
+2025-07-06 15:20:03,451 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Transferring FlowFile[filename=kafka-message-1704547203451] to relationship: success
+
+2025-07-06 15:20:03,452 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Processing FlowFile[filename=kafka-message-1704547203451]
+2025-07-06 15:20:03,452 DEBUG [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Evaluating JSON path: $.userId -> user_15
+2025-07-06 15:20:03,452 DEBUG [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Evaluating JSON path: $.eventType -> VIEW_PRODUCT
+2025-07-06 15:20:03,453 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Successfully extracted JSON attributes
+2025-07-06 15:20:03,453 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Routing to relationship: matched
+
+2025-07-06 15:20:03,454 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Processing FlowFile[filename=kafka-message-1704547203451]
+2025-07-06 15:20:03,454 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Executing script: data_enrichment.groovy
+2025-07-06 15:20:03,454 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding NiFi metadata: nifi.processing.timestamp=1704547203454
+2025-07-06 15:20:03,455 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding NiFi metadata: nifi.processor.name=nifi-kafka-processor
+2025-07-06 15:20:03,455 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding source metadata: source.topic=user-events, source.partition=2, source.offset=0
+2025-07-06 15:20:03,455 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Successfully enriched data
+2025-07-06 15:20:03,455 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Routing to relationship: success
+
+2025-07-06 15:20:03,456 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Publishing to topic: processed-events
+2025-07-06 15:20:03,456 DEBUG [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Message key: user_15
+2025-07-06 15:20:03,456 DEBUG [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Message content: {"userId": "user_15", "eventType": "VIEW_PRODUCT", "timestamp": 1704547200000, "sessionId": "session_abc123", "productId": "product_456", "amount": 0, "nifi.processing.timestamp": "1704547203454", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "2", "source.offset": "0"}
+2025-07-06 15:20:03,460 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Successfully published to topic: processed-events, partition: 2, offset: 0
+2025-07-06 15:20:03,460 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Routing to relationship: success
+
+2025-07-06 15:20:04,452 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Received message from topic: user-events, partition: 2, offset: 1, key: user_19
+2025-07-06 15:20:04,452 DEBUG [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Message content: {"userId": "user_19", "eventType": "PURCHASE", "timestamp": 1704547201000, "sessionId": "session_def456", "productId": "product_789", "amount": 99.99}
+2025-07-06 15:20:04,453 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Routing to relationship: success
+
+2025-07-06 15:20:04,454 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Processing FlowFile[filename=kafka-message-1704547204452]
+2025-07-06 15:20:04,454 DEBUG [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Evaluating JSON path: $.userId -> user_19
+2025-07-06 15:20:04,454 DEBUG [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Evaluating JSON path: $.eventType -> PURCHASE
+2025-07-06 15:20:04,455 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Successfully extracted JSON attributes
+2025-07-06 15:20:04,455 INFO [Timer-Driven Process Thread-3] o.a.n.p.json.EvaluateJsonPath EvaluateJsonPath[id=01814e5e-7c9a-12eb-9c8b-0242ac110004] Routing to relationship: matched
+
+2025-07-06 15:20:04,456 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Processing FlowFile[filename=kafka-message-1704547204452]
+2025-07-06 15:20:04,456 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Detected PURCHASE event - routing to purchase topic
+2025-07-06 15:20:04,456 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding NiFi metadata: nifi.processing.timestamp=1704547204456
+2025-07-06 15:20:04,456 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding NiFi metadata: nifi.processor.name=nifi-kafka-processor
+2025-07-06 15:20:04,457 DEBUG [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Adding source metadata: source.topic=user-events, source.partition=2, source.offset=1
+2025-07-06 15:20:04,457 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Successfully enriched data
+2025-07-06 15:20:04,457 INFO [Timer-Driven Process Thread-4] o.a.n.p.script.ExecuteScript ExecuteScript[id=01814e5e-7c9a-12eb-9c8b-0242ac110005] Routing to relationship: success
+
+2025-07-06 15:20:04,458 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Publishing to topic: processed-events
+2025-07-06 15:20:04,458 INFO [Timer-Driven Process Thread-6] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110007] Publishing to topic: purchase-events
+2025-07-06 15:20:04,458 DEBUG [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Message key: user_19
+2025-07-06 15:20:04,458 DEBUG [Timer-Driven Process Thread-6] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110007] Message key: user_19
+2025-07-06 15:20:04,459 DEBUG [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Message content: {"userId": "user_19", "eventType": "PURCHASE", "timestamp": 1704547201000, "sessionId": "session_def456", "productId": "product_789", "amount": 99.99, "nifi.processing.timestamp": "1704547204456", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "2", "source.offset": "1"}
+2025-07-06 15:20:04,459 DEBUG [Timer-Driven Process Thread-6] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110007] Message content: {"userId": "user_19", "eventType": "PURCHASE", "timestamp": 1704547201000, "sessionId": "session_def456", "productId": "product_789", "amount": 99.99, "nifi.processing.timestamp": "1704547204456", "nifi.processor.name": "nifi-kafka-processor", "source.topic": "user-events", "source.partition": "2", "source.offset": "1"}
+2025-07-06 15:20:04,462 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Successfully published to topic: processed-events, partition: 2, offset: 1
+2025-07-06 15:20:04,462 INFO [Timer-Driven Process Thread-6] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110007] Successfully published to topic: purchase-events, partition: 0, offset: 0
+2025-07-06 15:20:04,462 INFO [Timer-Driven Process Thread-5] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110006] Routing to relationship: success
+2025-07-06 15:20:04,462 INFO [Timer-Driven Process Thread-6] o.a.n.p.kafka.pubsub.PublishKafka PublishKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110007] Routing to relationship: success
+
+2025-07-06 15:20:05,454 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Received message from topic: user-events, partition: 1, offset: 0, key: user_13
+2025-07-06 15:20:05,454 DEBUG [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Message content: {"userId": "user_13", "eventType": "VIEW_PRODUCT", "timestamp": 1704547202000, "sessionId": "session_ghi789", "productId": "product_123", "amount": 0}
+2025-07-06 15:20:05,455 INFO [Timer-Driven Process Thread-2] o.a.n.p.kafka.pubsub.ConsumeKafka ConsumeKafka[id=01814e5e-7c9a-12eb-9c8b-0242ac110003] Routing to relationship: success
+
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Flow statistics:
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Messages processed: 8
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Total bytes processed: 2456
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Processing time: 23.6 seconds
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Throughput: 0.34 messages/second
+2025-07-06 15:20:15,600 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Error rate: 0.00%
+
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Topic distribution:
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   processed-events: 8 messages
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   purchase-events: 1 messages
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   analytics-events: 0 messages
+
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008] Event type distribution:
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   VIEW_PRODUCT: 3 events
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   PURCHASE: 1 events
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   ADD_TO_CART: 1 events
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   LOGIN: 1 events
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   LOGOUT: 1 events
+2025-07-06 15:20:15,601 INFO [Timer-Driven Process Thread-7] o.a.n.p.statistics.SiteToSiteMetrics SiteToSiteMetrics[id=01814e5e-7c9a-12eb-9c8b-0242ac110008]   REGISTER: 1 events

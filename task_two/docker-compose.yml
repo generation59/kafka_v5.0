@@ -1,0 +1,286 @@
+
+
+services:
+  # Zookeeper для управления Kafka кластером
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    hostname: zookeeper
+    container_name: kafka-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Kafka Broker 1
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka-broker-1
+    container_name: kafka-broker-1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9991:9991"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-1:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE: 'false'
+      KAFKA_COMPRESSION_TYPE: 'snappy'
+      KAFKA_JMX_PORT: 9991
+      KAFKA_JMX_HOSTNAME: localhost
+    volumes:
+      - kafka-1-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Kafka Broker 2
+  kafka-broker-2:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka-broker-2
+    container_name: kafka-broker-2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9093"
+      - "9992:9992"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-2:29093,PLAINTEXT_HOST://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE: 'false'
+      KAFKA_COMPRESSION_TYPE: 'snappy'
+      KAFKA_JMX_PORT: 9992
+      KAFKA_JMX_HOSTNAME: localhost
+    volumes:
+      - kafka-2-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Kafka Broker 3
+  kafka-broker-3:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka-broker-3
+    container_name: kafka-broker-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9094"
+      - "9993:9993"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-3:29094,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE: 'false'
+      KAFKA_COMPRESSION_TYPE: 'snappy'
+      KAFKA_JMX_PORT: 9993
+      KAFKA_JMX_HOSTNAME: localhost
+    volumes:
+      - kafka-3-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Schema Registry
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.4.0
+    hostname: schema-registry
+    container_name: kafka-schema-registry
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    ports:
+      - "8081:8081"
+      - "9994:9994"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC_REPLICATION_FACTOR: 3
+      SCHEMA_REGISTRY_COMPRESSION_TYPE: snappy
+      SCHEMA_REGISTRY_JMX_PORT: 9994
+    volumes:
+      - schema-registry-data:/var/lib/schema-registry
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Apache NiFi
+  nifi:
+    image: apache/nifi:1.21.0
+    hostname: nifi
+    container_name: apache-nifi
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schema-registry
+    ports:
+      - "8080:8080"
+      - "9995:9995"
+    environment:
+      # JVM Settings для Windows
+      NIFI_JVM_HEAP_INIT: 2g
+      NIFI_JVM_HEAP_MAX: 4g
+      
+      # Аутентификация
+      SINGLE_USER_CREDENTIALS_USERNAME: admin
+      SINGLE_USER_CREDENTIALS_PASSWORD: ctsBtRBKHRAx69EqUghvvgEvjnaLjFEB
+      
+      # Сетевые настройки
+      NIFI_WEB_HTTP_HOST: 0.0.0.0
+      NIFI_WEB_HTTP_PORT: 8080
+      NIFI_WEB_HTTPS_PORT: ''
+      NIFI_SECURITY_USER_LOGIN_IDENTITY_PROVIDER: ''
+      
+      # Kafka настройки
+      KAFKA_BOOTSTRAP_SERVERS: kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094
+      KAFKA_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      
+      # Производительность
+      NIFI_FLOWCONTROLLER_GRACEFUL_SHUTDOWN_PERIOD: 20 sec
+      NIFI_FLOWSERVICE_WRITEDELAY_INTERVAL: 2 sec
+      NIFI_ADMINISTRATIVE_YIELD_DURATION: 30 sec
+      NIFI_BORED_YIELD_DURATION: 10 millis
+      NIFI_PROCESSOR_SCHEDULING_TIMEOUT: 1 min
+      
+      # JMX мониторинг
+      NIFI_JMX_PORT: 9995
+    volumes:
+      - nifi-conf:/opt/nifi/nifi-current/conf
+      - nifi-database_repository:/opt/nifi/nifi-current/database_repository
+      - nifi-flowfile_repository:/opt/nifi/nifi-current/flowfile_repository
+      - nifi-content_repository:/opt/nifi/nifi-current/content_repository
+      - nifi-provenance_repository:/opt/nifi/nifi-current/provenance_repository
+      - nifi-state:/opt/nifi/nifi-current/state
+      - nifi-logs:/opt/nifi/nifi-current/logs
+      - ./nifi-templates:/opt/nifi/nifi-current/conf/templates
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Инициализация топиков Kafka
+  kafka-init:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka-init
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    networks:
+      - kafka-network
+    command: >
+      bash -c "
+        echo 'Ожидание готовности Kafka кластера...'
+        sleep 45
+        
+        echo 'Создание топиков...'
+        
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --create --if-not-exists --topic user-events --partitions 3 --replication-factor 3 --config cleanup.policy=delete --config retention.ms=604800000 --config segment.bytes=1073741824 --config compression.type=snappy --config min.insync.replicas=2
+          
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --create --if-not-exists --topic processed-events --partitions 3 --replication-factor 3 --config cleanup.policy=delete --config retention.ms=604800000 --config segment.bytes=1073741824 --config compression.type=snappy --config min.insync.replicas=2
+          
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --create --if-not-exists --topic analytics-events --partitions 3 --replication-factor 3 --config cleanup.policy=delete --config retention.ms=604800000 --config segment.bytes=1073741824 --config compression.type=snappy --config min.insync.replicas=2
+          
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --create --if-not-exists --topic purchase-events --partitions 3 --replication-factor 3 --config cleanup.policy=delete --config retention.ms=604800000 --config segment.bytes=1073741824 --config compression.type=snappy --config min.insync.replicas=2
+          
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --create --if-not-exists --topic error-events --partitions 3 --replication-factor 3 --config cleanup.policy=delete --config retention.ms=604800000 --config segment.bytes=1073741824 --config compression.type=snappy --config min.insync.replicas=2
+        
+        echo 'Топики созданы успешно!'
+        echo 'Список созданных топиков:'
+        kafka-topics --bootstrap-server kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094 --list
+        echo 'Инициализация Kafka завершена.'
+      "
+
+  # Kafka UI для веб-мониторинга
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schema-registry
+    ports:
+      - "8082:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kafka-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-broker-1:29092,kafka-broker-2:29093,kafka-broker-3:29094
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+# Постоянные тома для данных
+volumes:
+  zookeeper-data:
+    driver: local
+  zookeeper-logs:
+    driver: local
+  kafka-1-data:
+    driver: local
+  kafka-2-data:
+    driver: local
+  kafka-3-data:
+    driver: local
+  schema-registry-data:
+    driver: local
+  nifi-conf:
+    driver: local
+  nifi-database_repository:
+    driver: local
+  nifi-flowfile_repository:
+    driver: local
+  nifi-content_repository:
+    driver: local
+  nifi-provenance_repository:
+    driver: local
+  nifi-state:
+    driver: local
+  nifi-logs:
+    driver: local
+
+# Изолированная сеть
+networks:
+  kafka-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.4">
+    <description>Kafka Integration Flow - обработка пользовательских событий между топиками</description>
+    <groupId>12345678-1234-5678-9012-123456789012</groupId>
+    <name>Kafka Integration Flow</name>
+    <snippet>
+        <processGroups>
+            <id>pg-kafka-integration</id>
+            <parentGroupId>root</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>0.0</y>
+            </position>
+            <comment>Основной поток обработки событий Kafka</comment>
+            <contents>
+                <!-- Kafka Consumer Process -->
+                <processors>
+                    <id>consumer-user-events</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <position>
+                        <x>200.0</x>
+                        <y>200.0</y>
+                    </position>
+                    <type>org.apache.nifi.processors.kafka.pubsub.ConsumeKafka_2_6</type>
+                    <name>Consume User Events</name>
+                    <comment>Читает события из топика user-events</comment>
+                    <schedulingPeriod>1 sec</schedulingPeriod>
+                    <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                    <maxConcurrentTasks>2</maxConcurrentTasks>
+                    <runDurationMillis>0</runDurationMillis>
+                    <yieldDurationMillis>1000</yieldDurationMillis>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <lossTolerant>false</lossTolerant>
+                    <properties>
+                        <entry>
+                            <key>bootstrap.servers</key>
+                            <value>localhost:9092,localhost:9093,localhost:9094</value>
+                        </entry>
+                        <entry>
+                            <key>topic</key>
+                            <value>user-events</value>
+                        </entry>
+                        <entry>
+                            <key>group.id</key>
+                            <value>nifi-consumer-group</value>
+                        </entry>
+                        <entry>
+                            <key>auto.offset.reset</key>
+                            <value>earliest</value>
+                        </entry>
+                        <entry>
+                            <key>key.deserializer</key>
+                            <value>org.apache.kafka.common.serialization.StringDeserializer</value>
+                        </entry>
+                        <entry>
+                            <key>value.deserializer</key>
+                            <value>org.apache.kafka.common.serialization.ByteArrayDeserializer</value>
+                        </entry>
+                        <entry>
+                            <key>session.timeout.ms</key>
+                            <value>30000</value>
+                        </entry>
+                        <entry>
+                            <key>commit.offsets</key>
+                            <value>true</value>
+                        </entry>
+                    </properties>
+                    <autoTerminatedRelationships>
+                        <element>parse.failure</element>
+                    </autoTerminatedRelationships>
+                </processors>
+
+                <!-- Update Attributes Process -->
+                <processors>
+                    <id>update-attributes</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <position>
+                        <x>500.0</x>
+                        <y>200.0</y>
+                    </position>
+                    <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+                    <name>Add Processing Info</name>
+                    <comment>Добавляет метаданные обработки</comment>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                    <maxConcurrentTasks>1</maxConcurrentTasks>
+                    <runDurationMillis>25</runDurationMillis>
+                    <yieldDurationMillis>1000</yieldDurationMillis>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <lossTolerant>false</lossTolerant>
+                    <properties>
+                        <entry>
+                            <key>nifi.processing.timestamp</key>
+                            <value>${now()}</value>
+                        </entry>
+                        <entry>
+                            <key>nifi.processor.name</key>
+                            <value>nifi-kafka-processor</value>
+                        </entry>
+                        <entry>
+                            <key>source.topic</key>
+                            <value>${kafka.topic}</value>
+                        </entry>
+                        <entry>
+                            <key>source.partition</key>
+                            <value>${kafka.partition}</value>
+                        </entry>
+                        <entry>
+                            <key>source.offset</key>
+                            <value>${kafka.offset}</value>
+                        </entry>
+                    </properties>
+                </processors>
+
+                <!-- Kafka Producer Process -->
+                <processors>
+                    <id>producer-processed-events</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <position>
+                        <x>800.0</x>
+                        <y>200.0</y>
+                    </position>
+                    <type>org.apache.nifi.processors.kafka.pubsub.PublishKafka_2_6</type>
+                    <name>Publish Processed Events</name>
+                    <comment>Отправляет обработанные события в топик processed-events</comment>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                    <maxConcurrentTasks>1</maxConcurrentTasks>
+                    <runDurationMillis>25</runDurationMillis>
+                    <yieldDurationMillis>1000</yieldDurationMillis>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <lossTolerant>false</lossTolerant>
+                    <properties>
+                        <entry>
+                            <key>bootstrap.servers</key>
+                            <value>localhost:9092,localhost:9093,localhost:9094</value>
+                        </entry>
+                        <entry>
+                            <key>topic</key>
+                            <value>processed-events</value>
+                        </entry>
+                        <entry>
+                            <key>delivery.timeout.ms</key>
+                            <value>120000</value>
+                        </entry>
+                        <entry>
+                            <key>key.serializer</key>
+                            <value>org.apache.kafka.common.serialization.StringSerializer</value>
+                        </entry>
+                        <entry>
+                            <key>value.serializer</key>
+                            <value>org.apache.kafka.common.serialization.StringSerializer</value>
+                        </entry>
+                        <entry>
+                            <key>compression.type</key>
+                            <value>snappy</value>
+                        </entry>
+                        <entry>
+                            <key>acks</key>
+                            <value>all</value>
+                        </entry>
+                        <entry>
+                            <key>message.key</key>
+                            <value>${kafka.key:ifEmpty('${uuid}')}</value>
+                        </entry>
+                    </properties>
+                    <autoTerminatedRelationships>
+                        <element>success</element>
+                        <element>failure</element>
+                    </autoTerminatedRelationships>
+                </processors>
+
+                <!-- Log Process -->
+                <processors>
+                    <id>log-events</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <position>
+                        <x>500.0</x>
+                        <y>400.0</y>
+                    </position>
+                    <type>org.apache.nifi.processors.standard.LogAttribute</type>
+                    <name>Log Event Processing</name>
+                    <comment>Логирует информацию об обработанных событиях</comment>
+                    <schedulingPeriod>0 sec</schedulingPeriod>
+                    <schedulingStrategy>EVENT_DRIVEN</schedulingStrategy>
+                    <maxConcurrentTasks>1</maxConcurrentTasks>
+                    <runDurationMillis>25</runDurationMillis>
+                    <yieldDurationMillis>1000</yieldDurationMillis>
+                    <bulletinLevel>WARN</bulletinLevel>
+                    <lossTolerant>false</lossTolerant>
+                    <properties>
+                        <entry>
+                            <key>Log Level</key>
+                            <value>info</value>
+                        </entry>
+                        <entry>
+                            <key>Log Payload</key>
+                            <value>false</value>
+                        </entry>
+                        <entry>
+                            <key>Attributes to Log</key>
+                            <value>kafka.key,kafka.topic,kafka.partition,kafka.offset,nifi.processing.timestamp</value>
+                        </entry>
+                        <entry>
+                            <key>Attributes to Log CSV</key>
+                            <value>false</value>
+                        </entry>
+                        <entry>
+                            <key>Log prefix</key>
+                            <value>NiFi-Kafka-Processing: </value>
+                        </entry>
+                    </properties>
+                    <autoTerminatedRelationships>
+                        <element>success</element>
+                    </autoTerminatedRelationships>
+                </processors>
+
+                <!-- Connections -->
+                <connections>
+                    <id>conn-consumer-to-update</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <source>
+                        <id>consumer-user-events</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </source>
+                    <destination>
+                        <id>update-attributes</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </destination>
+                    <name></name>
+                    <selectedRelationships>
+                        <element>success</element>
+                    </selectedRelationships>
+                    <labelIndex>1</labelIndex>
+                    <zIndex>0</zIndex>
+                </connections>
+
+                <connections>
+                    <id>conn-update-to-producer</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <source>
+                        <id>update-attributes</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </source>
+                    <destination>
+                        <id>producer-processed-events</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </destination>
+                    <name></name>
+                    <selectedRelationships>
+                        <element>success</element>
+                    </selectedRelationships>
+                    <labelIndex>1</labelIndex>
+                    <zIndex>0</zIndex>
+                </connections>
+
+                <connections>
+                    <id>conn-update-to-log</id>
+                    <parentGroupId>pg-kafka-integration</parentGroupId>
+                    <source>
+                        <id>update-attributes</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </source>
+                    <destination>
+                        <id>log-events</id>
+                        <groupId>pg-kafka-integration</groupId>
+                        <type>PROCESSOR</type>
+                    </destination>
+                    <name></name>
+                    <selectedRelationships>
+                        <element>success</element>
+                    </selectedRelationships>
+                    <labelIndex>1</labelIndex>
+                    <zIndex>0</zIndex>
+                </connections>
+
+            </contents>
+        </processGroups>
+    </snippet>
+</template> 

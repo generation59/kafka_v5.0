@@ -1,0 +1,67 @@
+{
+  "type": "record",
+  "name": "UserEvent",
+  "namespace": "com.example.kafka.events",
+  "doc": "Schema for user events in the system",
+  "fields": [
+    {
+      "name": "userId",
+      "type": "string",
+      "doc": "Unique identifier for the user"
+    },
+    {
+      "name": "eventType",
+      "type": {
+        "type": "enum",
+        "name": "EventType",
+        "symbols": ["LOGIN", "LOGOUT", "PURCHASE", "VIEW_PRODUCT", "ADD_TO_CART", "REGISTER"]
+      },
+      "doc": "Type of the event"
+    },
+    {
+      "name": "timestamp",
+      "type": "long",
+      "logicalType": "timestamp-millis",
+      "doc": "Event timestamp in milliseconds since epoch"
+    },
+    {
+      "name": "sessionId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "User session identifier, can be null"
+    },
+    {
+      "name": "productId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Product identifier for product-related events"
+    },
+    {
+      "name": "amount",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Amount for purchase events"
+    },
+    {
+      "name": "userAgent",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "User agent string from the browser"
+    },
+    {
+      "name": "ipAddress",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "IP address of the user"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "type": "map",
+        "values": "string"
+      },
+      "default": {},
+      "doc": "Additional metadata as key-value pairs"
+    }
+  ]
+} 
